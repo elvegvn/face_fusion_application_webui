@@ -1,0 +1,18 @@
+import cv2
+import gradio as gr
+from modelscope.outputs import OutputKeys
+from modelscope.pipelines import pipeline
+from modelscope.utils.constant import Tasks
+
+
+cv2.imwrite('result.png', result[OutputKeys.OUTPUT_IMG])
+print('finished!')
+
+
+def face_fusion(template_path, user_path):
+    image_face_fusion = pipeline(Tasks.image_face_fusion,model='damo/cv_unet-image-face-fusion_damo')
+    result = image_face_fusion(dict(template=template_path, user=user_path))
+    return result[OutputKeys.OUTPUT_IMG]
+
+iface = gr.Interface(fn=face_fusion, inputs=["text", "text"], outputs="image")
+iface.launch()
