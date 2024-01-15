@@ -1,0 +1,58 @@
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+import os
+import subprocess
+import uvicorn
+
+app = FastAPI()
+
+@app.get("/execute_files/file1")
+def execute_file1():
+    # 执行文件1.py的代码逻辑
+    file_path = "/path/to/project/folder/file1.py"
+    subprocess.call(["python", file_path])
+
+    return {"message": "file1.py 执行完毕"}
+
+@app.get("/execute_files/file2")
+def execute_file2():
+    # 执行文件2.py的代码逻辑
+    file_path = "/path/to/project/folder/file2.py"
+    subprocess.call(["python", file_path])
+
+    return {"message": "file2.py 执行完毕"}
+
+@app.get("/execute_files/file3")
+def execute_file3():
+    # 执行文件3.py的代码逻辑
+    file_path = "/path/to/project/folder/file3.py"
+    subprocess.call(["python", file_path])
+
+    return {"message": "file3.py 执行完毕"}
+
+@app.get("/load_files/{folder_path:path}")
+def load_files(folder_path: str):
+    # 获取指定文件夹下的所有文件
+    files = os.listdir(folder_path)
+    return {"files": files}
+
+# 挂载静态文件夹
+app.mount("/static", StaticFiles(directory="/path/to/project/folder"), name="static")
+
+@app.get("/execute_files/{file_name}")
+def execute_file(file_name: str):
+    file_path = f"/path/to/project/folder/{file_name}.py"
+    if os.path.exists(file_path):
+        subprocess.call(["python", file_path])
+        return {"message": f"{file_name}.py 执行完毕"}
+    else:
+        return {"error": "File not found"}
+
+@app.get("/load_files/{folder_path:path}")
+def load_files_(folder_path: str):
+    files = os.listdir(folder_path)
+    return {"files": files}
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
